@@ -26,6 +26,9 @@ def register():
         if user['email'] == email:
             return {'message': 'User already exists'}, 400
 
+    if len(password) < 6:
+        return {'message': 'ser already exists'}, 400
+
     # Хешируем пароль
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
