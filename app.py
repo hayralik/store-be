@@ -27,7 +27,7 @@ def register():
             return {'message': 'User already exists'}, 400
 
     if len(password) < 6:
-        return {'message': 'ser already exists'}, 400
+        return {'message': 'The password must contain at least 6 characters!'}, 400
 
     # Хешируем пароль
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -42,6 +42,11 @@ def register():
 
     return {'message': 'User created successfully'}, 201
 
+@app.route('/api/users')
+def users():
+    return jsonify([{user['id']: user['email']} for user in users_db])
+#    return jsonify([1, 2])
+        
 @app.route('/')
 def home():
     return jsonify({"message": "Hello from Flask!"})
