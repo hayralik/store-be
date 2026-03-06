@@ -44,7 +44,7 @@ def register():
 
 @app.route('/api/users')
 def users():
-    return jsonify([{user['id']: user['email']} for user in users_db])
+    return jsonify([{'id': user['id'], 'email': user['email']} for user in users_db])
 #    return jsonify([1, 2])
         
 @app.route('/')
