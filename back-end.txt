@@ -3,7 +3,41 @@
 Шаг 2. Создаём виртуальное окружение Python
 В папке store-be откройте терминал VS Code и выполните:
 a) в терминале, от именно админа, ищем в пуске PowerShell:
+
 б) Эта команда разрешит выполнение ваших локальных скриптов и рекомендуется для разработки
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 в) python -m venv venv
 venv\Scripts\activate
+
+
+Настройка Flask-бэкенда с нуля
+1. Создание окружения
+
+bash
+cd D:\MySites\store-be
+python -m venv venv
+venv\Scripts\activate
+2. Установка пакетов
+
+bash
+pip install flask flask-cors flask-bcrypt flask-jwt-extended requests
+3. Запуск сервера
+
+bash
+python app.py
+(терминал остаётся открытым, видно логи)
+
+4. Проверка в другом терминале
+
+bash
+curl.exe http://localhost:5000/api/users
+curl.exe -X POST http://localhost:5000/api/register -H "Content-Type: application/json" -d "{\"email\":\"test@mail.com\",\"password\":\"123456\"}"
+5. Остановка сервера
+Ctrl + C в терминале с сервером
+
+6. Выход из окружения
+
+bash
+deactivate
+Важно: сервер и клиент — в разных терминалах, но оба с активным (venv).

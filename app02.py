@@ -44,10 +44,16 @@ def register():
 
 @app.route('/api/users')
 def users():
-    header = ("X-Secret-Key", "mysecret")
-    if header not in request.headers.items():
+#    secret = request.headers.get('X-Secret-Key')
+#    if secret != 'mysecret':
+#    if all (header not in (users_db | {'X-Secret-Key': 'Secret'}) for header in request.headers):
+#    if {'X-Secret-Key': 'Secret'} not in request.headers:
+#        return {'message': 'Forbidden'}, 403
+    if all (header not in users_db for header in request.headers):
         return {'message': '|Forbidden'}, 403
+    
     return jsonify([{'id': user['id'], 'email': user['email']} for user in users_db])
+#    return jsonify([1, 2])
         
 @app.route('/')
 def home():
