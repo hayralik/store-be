@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS  # добавьте этот импорт
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from datetime import timedelta
 
 app = Flask(__name__)
 CORS(app)
@@ -54,7 +55,7 @@ def login():
     for user in users_db:
         if user['email'] == email and bcrypt.check_password_hash(user['password'], password):
             # Создаём токен
-            access_token = create_access_token(identity=str(user['id']))
+            access_token = create_access_token(identity=str(user['id']), expires_delta=timedelta(hours=1))
             return {'access_token': access_token}, 200
 
     return {'message': 'Invalid credentials'}, 401
