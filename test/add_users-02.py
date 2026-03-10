@@ -1,0 +1,19 @@
+import requests
+
+users = [
+    {'id': 1, 'email': 'alik01@test.com', 'password': 'Alik01'},
+    {'id': 2, 'email': 'alik02@test.com', 'password': 'Alik02'},
+    {'id': 3, 'email': 'alik03@test.com', 'password': 'Alik3'}
+    ]
+url = "http://localhost:5000"
+
+def post(url, user):
+    print(requests.post(url, json=user).json())
+
+
+for user in users:
+    post(url + '/api/register', user)
+    
+# for user in users:
+#    print(requests.post("http://localhost:5000/api/register",
+#        json={"email":user['email'],"password":user['password']}).json())

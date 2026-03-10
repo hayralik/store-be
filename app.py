@@ -14,6 +14,7 @@ jwt = JWTManager(app)
 # Временное хранилище (потом заменим на БД)
 users_db = []
 
+
 @app.route('/api/register', methods=['POST'])
 def register():
     print("Полученные данные:", request.get_json())
@@ -42,16 +43,48 @@ def register():
 
     return {'message': 'User created successfully'}, 201
 
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    # Ищем пользователя в users_db
+    for user in users_db:
+        if user['email'] == email and bcrypt.check_password_hash(user['password'], password):
+            # Создаём токен
+            access_token = create_access_token(identity=str(user['id']))
+            return {'access_token': access_token}, 200
+
+    return {'message': 'Invalid credentials'}, 401
+
+
+@app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    current_user_id = int(get_jwt_identity())
+    
+    # Ищем пользователя по id
+    for user in users_db:
+        if user['id'] == current_user_id:
+            return {'id': user['id'], 'email': user['email']}, 200
+    
+    return {'message': 'User not found'}, 404
+
+
 @app.route('/api/users')
 def users():
     header = ("X-Secret-Key", "mysecret")
     if header not in request.headers.items():
         return {'message': '|Forbidden'}, 403
     return jsonify([{'id': user['id'], 'email': user['email']} for user in users_db])
-        
+
+
 @app.route('/')
 def home():
     return jsonify({"message": "Hello from Flask!"})
+
 
 @app.route('/api/products')
 def products():
@@ -61,6 +94,7 @@ def products():
         {"id": 3, "name": "Клавиатура", "price": 3500}
     ]
     return jsonify(products_list)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
