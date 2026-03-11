@@ -8,5 +8,9 @@ data = {'email': user['email'], 'password': user['password']}
 
 #response = requests.post(url + endpoint, headers=headers, json=data)
 response = requests.post(url + endpoint, json=data)
-print(response.json())  # вот это напечатает данные
+
+
+print(response.status_code)
+print(response.text)
+#print(response.json())  # вот это напечатает данные
 
