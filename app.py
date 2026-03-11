@@ -3,6 +3,8 @@ from flask_cors import CORS  # добавьте этот импорт
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -12,9 +14,22 @@ app.config['JWT_SECRET_KEY'] = 'ваш-секретный-ключ-123'  # по�
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+class User(db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+    
+    def __repr__(self):
+        return f'<User {self.email}>'
+
 # Временное хранилище (потом заменим на БД)
 users_db = []
-
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -55,7 +70,7 @@ def login():
     for user in users_db:
         if user['email'] == email and bcrypt.check_password_hash(user['password'], password):
             # Создаём токен
-            access_token = create_access_token(identity=str(user['id']), expires_delta=timedelta(hours=1))
+            access_token = create_access_token(identity=str(user['id']), expires_delta=timedelta(days=1))
             return {'access_token': access_token}, 200
 
     return {'message': 'Invalid credentials'}, 401

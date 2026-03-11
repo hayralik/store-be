@@ -1,0 +1,11 @@
+db.Model — базовый класс для всех моделей SQLAlchemy
+
+__tablename__ — имя таблицы в базе данных
+
+db.Column — определение колонки
+
+primary_key=True — уникальный идентификатор
+
+unique=True — email должен быть уникальным
+
+nullable=False — обязательное поле
