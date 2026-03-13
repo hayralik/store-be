@@ -118,5 +118,18 @@ def get_products():
     } for p in products])
 
 
+@app.route('/api/products', methods=['POST'])
+def add_product():
+    data = request.get_json()
+    product = Product(
+        name=data['name'],
+        price=data['price'],
+        description=data.get('description', '')
+    )
+    db.session.add(product)
+    db.session.commit()
+    return {'message': 'Product added', 'id': product.id}, 201
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
