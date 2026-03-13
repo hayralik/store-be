@@ -29,6 +29,18 @@ class User(db.Model):
         return f'<User {self.email}>'
 
 
+class Product(db.Model):
+    __tablename__ = 'products'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    
+    def __repr__(self):
+        return f'<Product {self.name}>'
+
+
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -96,13 +108,14 @@ def home():
 
 
 @app.route('/api/products')
-def products():
-    products_list = [
-        {"id": 1, "name": "Ноутбук", "price": 75000},
-        {"id": 2, "name": "Мышь", "price": 1500},
-        {"id": 3, "name": "Клавиатура", "price": 3500}
-    ]
-    return jsonify(products_list)
+def get_products():
+    products = Product.query.all()
+    return jsonify([{
+        'id': p.id,
+        'name': p.name,
+        'price': p.price,
+        'description': p.description
+    } for p in products])
 
 
 if __name__ == '__main__':
