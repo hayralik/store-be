@@ -17,6 +17,7 @@ jwt = JWTManager(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+
 db = SQLAlchemy(app)
 class User(db.Model):
     __tablename__ = 'users'
