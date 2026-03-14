@@ -1,4 +1,10 @@
-from imports import *
+from flask import Flask, jsonify, request
+from flask_cors import CORS  # добавьте этот импорт
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -95,47 +101,3 @@ def profile():
 def users():
     users_list = User.query.all()
     return jsonify([{'id': u.id, 'email': u.email} for u in users_list])
-
-
-@app.route('/')
-def home():
-    return jsonify({"message": "Hello from Flask!"})
-
-
-@app.route('/api/products')
-def get_products():
-    products = Product.query.all()
-    return jsonify([{
-        'id': p.id,
-        'name': p.name,
-        'price': p.price,
-        'description': p.description
-    } for p in products])
-
-"""
-@app.route('/api/products/<int:id>')
-def get_product(id):
-    product = Product.query.get_or_404(id)
-    return jsonify({
-        'id': product.id,
-        'name': product.name,
-        'price': product.price,
-        'description': product.description
-    })
-"""
-
-@app.route('/api/products', methods=['POST'])
-def add_product():
-    data = request.get_json()
-    product = Product(
-        name=data['name'],
-        price=data['price'],
-        description=data.get('description', '')
-    )
-    db.session.add(product)
-    db.session.commit()
-    return {'message': 'Product added', 'id': product.id}, 201
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)

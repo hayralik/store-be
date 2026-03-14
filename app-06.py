@@ -1,4 +1,10 @@
-from imports import *
+from flask import Flask, jsonify, request
+from flask_cors import CORS  # добавьте этот импорт
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from datetime import timedelta
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -112,17 +118,6 @@ def get_products():
         'description': p.description
     } for p in products])
 
-"""
-@app.route('/api/products/<int:id>')
-def get_product(id):
-    product = Product.query.get_or_404(id)
-    return jsonify({
-        'id': product.id,
-        'name': product.name,
-        'price': product.price,
-        'description': product.description
-    })
-"""
 
 @app.route('/api/products', methods=['POST'])
 def add_product():
