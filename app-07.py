@@ -67,9 +67,15 @@ def profile():
     return {'message': 'User not found'}, 404
 
 
-setup_users(app, User)
+@app.route('/api/users')
+def users():
+    users_list = User.query.all()
+    return jsonify([{'id': u.id, 'email': u.email} for u in users_list])
 
-setup_home(app)
+
+@app.route('/')
+def home():
+    return jsonify({"message": "Hello from Flask!"})
 
 
 @app.route('/api/products')
