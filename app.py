@@ -11,76 +11,15 @@ db, User, Product = create_db(app)
 
 #print("CORS настроен?", app.after_request_funcs)  # должна быть не пустая
 
-
-@app.route('/api/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-
-    # Проверка на существующего пользователя через базу
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-        return {'message': 'User already exists'}, 400
-
-    if len(password) < 6:
-        return {'message': 'The password must contain at least 6 characters!'}, 400
-
-    # Хешируем пароль
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    # Создаём нового пользователя через модель
-    new_user = User(email=email, password=hashed_password)
-    
-    # Сохраняем в базу
-    db.session.add(new_user)
-    db.session.commit()
-
-    return {'message': 'User created successfully'}, 201
-
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-
-    user = User.query.filter_by(email=email).first()
-    if user and bcrypt.check_password_hash(user.password, password):
-        # Создаём токен
-        access_token = create_access_token(identity=str(user.id), expires_delta=timedelta(days=1))
-        return {'access_token': access_token}, 200
-
-    return {'message': 'Invalid credentials'}, 401
-
-
-@app.route('/api/profile', methods=['GET'])
-@jwt_required()
-def profile():
-    current_user_id = int(get_jwt_identity())
-    
-    # Ищем пользователя по id
-    user = User.query.filter_by(id=current_user_id).first()
-    if user:
-        return {'id': user.id, 'email': user.email}, 200
-    
-    return {'message': 'User not found'}, 404
-
-
+setup_home(app)
 setup_users(app, User)
 
-setup_home(app)
+setup_register(app, User, bcrypt, db)
+setup_login(app, User, bcrypt)
+setup_profile(app, User)
 
-
-@app.route('/api/products')
-def get_products():
-    products = Product.query.all()
-    return jsonify([{
-        'id': p.id,
-        'name': p.name,
-        'price': p.price,
-        'description': p.description
-    } for p in products])
+setup_get_products(app, Product)
+setup_add_product(app, Product, db)
 
 """
 @app.route('/api/products/<int:id>')
@@ -94,18 +33,22 @@ def get_product(id):
     })
 """
 
-@app.route('/api/products', methods=['POST'])
-def add_product():
-    data = request.get_json()
-    product = Product(
-        name=data['name'],
-        price=data['price'],
-        description=data.get('description', '')
-    )
-    db.session.add(product)
-    db.session.commit()
-    return {'message': 'Product added', 'id': product.id}, 201
 
+from sqlalchemy import text
+
+@app.route('/debug/types')
+def debug_types():
+    result = db.session.execute(text('SELECT id, typeof(id) FROM products'))
+    types = [{'id': row[0], 'type': row[1]} for row in result]
+    return jsonify(types)
+
+"""
+@app.route('/debug/types')
+def debug_types():
+    result = db.session.execute('SELECT id, typeof(id) FROM products')
+    types = [{'id': row[0], 'type': row[1]} for row in result]
+    return jsonify(types)
+"""
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
