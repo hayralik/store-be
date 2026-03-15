@@ -1,39 +1,15 @@
 from imports import *
 
+#1. создается основной объект Flask, который будет управлять всем приложением
 app = Flask(__name__)
-CORS(app)
 
-app.config['JWT_SECRET_KEY'] = 'ваш-секретный-ключ-123'  # поменяйте на свой
+#2. Конфигурация приложения (CORS, bcrypt, jwt)
+bcrypt, jwt = config_app(app)
 
-bcrypt = Bcrypt(app)
-jwt = JWTManager(app)
+#3. База данных (путь к БД, создание db, модели)
+db, User, Product = create_db(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-
-db = SQLAlchemy(app)
-class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    
-    def __repr__(self):
-        return f'<User {self.email}>'
-
-
-class Product(db.Model):
-    __tablename__ = 'products'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    price = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    
-    def __repr__(self):
-        return f'<Product {self.name}>'
+#print("CORS настроен?", app.after_request_funcs)  # должна быть не пустая
 
 
 @app.route('/api/register', methods=['POST'])
