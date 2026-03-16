@@ -39,5 +39,8 @@ def create_db(app):
         
         def __repr__(self):
             return f'<Product {self.name}>'
+        # Создаем таблицы, если их нет
+    with app.app_context():
+        db.create_all()
         
-    return db, User, Product
+    return db, User, Product    
