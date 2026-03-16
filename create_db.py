@@ -8,8 +8,15 @@ import os
 # Определяется модель User (таблица users) с полями id, email, password
 # Определяется модель Product (таблица products) с полями id, name, price, description
 def create_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
+#    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    database_url = os.environ.get('DATABASE_URL', '')
+    if database_url:
+        database_url = database_url.replace('postgres://', 'postgresql://')
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(os.path.dirname(__file__), 'shop.db')
 
     db = SQLAlchemy(app)
     class User(db.Model):
