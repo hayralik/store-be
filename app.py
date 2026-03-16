@@ -21,7 +21,7 @@ setup_profile(app, User)
 setup_get_products(app, Product)
 setup_add_product(app, Product, db)
 
-"""
+
 @app.route('/api/products/<int:id>')
 def get_product(id):
     product = Product.query.get_or_404(id)
@@ -31,7 +31,7 @@ def get_product(id):
         'price': product.price,
         'description': product.description
     })
-"""
+
 
 
 from sqlalchemy import text
