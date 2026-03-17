@@ -2,6 +2,7 @@ from imports import *
 
 #1. создается основной объект Flask, который будет управлять всем приложением
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'my-super-secret-jwt-key-2026-03-18'
 
 #2. Конфигурация приложения (CORS, bcrypt, jwt)
 bcrypt, jwt = config_app(app)
