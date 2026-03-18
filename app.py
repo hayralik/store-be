@@ -1,10 +1,12 @@
 from imports import *
+from dotenv import load_dotenv
+load_dotenv()
 
 #1. создается основной объект Flask, который будет управлять всем приложением
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = 'my-super-secret-jwt-key-2026-03-18'
 
 #2. Конфигурация приложения (CORS, bcrypt, jwt)
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
 bcrypt, jwt = config_app(app)
 
 #3. База данных (путь к БД, создание db, модели)
