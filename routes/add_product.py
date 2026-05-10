@@ -1,7 +1,9 @@
 from flask import request
+from flask_jwt_extended import jwt_required
 
 def setup_add_product(app, Product, db):
     @app.route('/api/products', methods=['POST'])
+    @jwt_required()
     def add_product():
         data = request.get_json()
         product = Product(
